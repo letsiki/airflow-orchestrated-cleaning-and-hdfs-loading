@@ -1,27 +1,27 @@
 ## Phase 2: Automation Features (Extra 1)
-- Add DB initialization script
 - Implement retry logic for unmatched subscribers
-- Maintain local venv for Spark
-- Still using SQLite
+- Add only new subscribers (no duplicates/overwrites)
+- Move SQL queries to external files
+- Create reusable utility functions
+- Maintain local venv + SQLite setup
 
 ## New Features
-- Automatic database and table creation if not exists
 - Store unmatched transactions for retry in subsequent runs
-- Move sql to external files
+- Prevent duplicate subscribers
+- Modular code structure with external SQL files and helper functions.
+- Database table verification and sample output display
 
 ## Known Limitations
-- Still using SQLite (single-threaded, file-based)
+- Still using SQLite
+- timestamps and dates still unix-style
 - No containerization yet
 
 
 ## Solutions (Later Phases)
 - Phase 3: Dockerize entire application + PostgreSQL migration
 - Phase 4: Add Hadoop cluster + HDFS storage
-- Refactor code into modular components
 - Possibly Orchestrate with Airflow
 
-## Choices
-- TBC
 
 ## Phase 2: Setup Instructions
 - Checkout (headless tag) with:
@@ -33,6 +33,7 @@ git checkout phase2
 
 - Python 3.12.3
 - Java 17+ installed and JAVA_HOME configured
+- Bash
 
 ### Setup
 

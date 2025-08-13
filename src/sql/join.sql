@@ -1,3 +1,4 @@
+-- We use inner join as we want to exclude unmatching sub_id's
 SELECT 
     cdt.timestamp,
     cs.row_key as sub_row_key,
