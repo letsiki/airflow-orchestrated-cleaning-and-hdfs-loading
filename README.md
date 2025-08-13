@@ -14,14 +14,16 @@ subscribers table, will be stored in a columnar format ready for analytics (parq
 ## Phase History 
 Click on the link for details and setup guide.  
 
-Even if only testing the final phase, I would encourage you to go through the notes of each phase, in order to get a more clear picture of how the project evolved.  
+Even if only testing the final phase, I would encourage you to go through the notes of each phase, in order to get a more clear picture of how the project evolved, as each phase is building on top of the previous one.
 
 - ✅ Phase 1: [Core Implementation (Base Requirements)](docs/phase1-notes.md)
 - 🔄 Phase 2: [Automation Features (Extra 1)](docs/phase2-notes.md)
-- 🔄 Phase 3: [Dockerization & PostgreSQL (Extra 2)](docs/phase3-notes.md)
+- 🔄 Phase 3: [Containerization & PostgreSQL (Extra 2)](docs/phase3-notes.md)
 - 🔄 Phase 4: [Hadoop Cluster & HDFS (Extra 3)](docs/phase4-notes.md)
+- 🔄 Phase 4: [Airflow Orchestration (Optional))](docs/phase4-notes.md)
+
 
 ## Universal Tools
-- Pylint - for linting python scripts
+- PyLint - for linting python scripts
 - Black - for formatting python scripts
 - VsCode - IDE
