@@ -1,42 +1,36 @@
 ## Phase 2: Automation Features (Extra 1)
-- Implement retry logic for unmatched subscribers
-- Add only new subscribers (no duplicates/overwrites)
-- Move SQL queries to external files
-- Create reusable utility functions
-- Maintain local venv + SQLite setup
 
-## New Features
-- Store unmatched transactions for retry in subsequent runs
-- Prevent duplicate subscribers
-- Modular code structure with external SQL files and helper functions.
-- Database table verification and sample output display
+### What's New
+- Retry logic for unmatched subscribers
+- SQL logic to prevent duplicate subscribers
+- Modular code structure with external SQL files
+- Utility functions for database operations
+- Database table verification and output display
 
-## Known Limitations
-- Still using SQLite
-- timestamps and dates still unix-style
+### Architecture
+- Local Python virtual environment
+- PySpark with external SQL files
+- SQLite with automated duplicate prevention
+- Utility module for reusable functions
+
+### Limitations & Trade-offs
+- Still using SQLite (single-threaded, file-based)
+- Timestamps and dates remain in unix-style format
 - No containerization yet
+- Limited retry mechanism (simple file-based storage)
 
-
-## Solutions (Later Phases)
-- Phase 3: Dockerize entire application + PostgreSQL migration
-- Phase 4: Add Hadoop cluster + HDFS storage
-- Possibly Orchestrate with Airflow
-
-
-## Phase 2: Setup Instructions
-- Checkout (headless tag) with:
+### Setup Instructions
+Checkout the phase2 tag:
 ```bash
 git checkout phase2
 ```
 
-### Prerequisites
-
+**Prerequisites:**
 - Python 3.12.3
 - Java 17+ installed and JAVA_HOME configured
 - Bash
 
-### Setup
-
+**Setup:**
 ```bash
 # Create virtual environment
 python -m venv .venv
@@ -46,7 +40,14 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### Run
+**Run:**
 ```bash
 python src/spark-job.py
 ```
+
+### Design Decisions
+- Implemented anti-join pattern for production-safe incremental loads
+- Stored unmatched transactions for retry processing in subsequent runs
+- Moved SQL to external files for better maintainability and syntax highlighting
+- Created utility functions to reduce code duplication
+- Maintained SQLite for consistency while building automation features

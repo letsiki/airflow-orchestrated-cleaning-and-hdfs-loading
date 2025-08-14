@@ -1,14 +1,15 @@
+"""
+Module responsible for initializing tables in the PG database
+"""
+
 import psycopg2
 
-# Quick connection and execution
+# Connect to database
 conn = psycopg2.connect(
-    host="localhost",
-    database="optasia", 
-    user="testuser",
-    password="password"
+    host="postgres", database="optasia", user="testuser", password="password"
 )
 
-with open('src/sql/db_init.sql', 'r') as file:
+with open("src/sql/db_init.sql", "r", encoding="utf-8") as file:
     sql = file.read()
 
 cur = conn.cursor()

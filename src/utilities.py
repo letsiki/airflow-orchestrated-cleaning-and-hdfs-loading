@@ -21,7 +21,7 @@ def read_table_from_db(
     """Helper function for reading tables from the database"""
     try:
         spark.read.format("jdbc").option(
-            "url", "jdbc:postgresql://localhost:5432/optasia"
+            "url", "jdbc:postgresql://postgres:5432/optasia"
         ).option("dbtable", dbtable).option("driver", "org.postgresql.Driver").option(
             "user", "testuser"
         ).option(
@@ -39,7 +39,7 @@ def read_table_from_db(
 def write_df_to_db_table(df: DataFrame, dbtable: str, mode: str):
     """Helper function for writing a dataframe to a db table"""
     df.write.format("jdbc").option(
-        "url", "jdbc:postgresql://localhost:5432/optasia"
+        "url", "jdbc:postgresql://postgres:5432/optasia"
     ).option("dbtable", dbtable).option("driver", "org.postgresql.Driver").option(
         "user", "testuser"
     ).option(
