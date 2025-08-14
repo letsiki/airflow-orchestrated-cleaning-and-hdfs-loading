@@ -87,7 +87,7 @@ spark.sql(
     read_sql_file("src/sql/union_unmatched_with_cleansed_transactions.sql")
 ).createOrReplaceTempView("cleansed_data_transactions")
 
-# ---------DETERMINE AND WRITE UNMATCHED TRANSACTIONS TO DATABASE------------- #
+# ---------DETERMINE AND WRITE UNMATCHED TRANSACTIONS TO DB------------- #
 
 # Create a dataframe out of the transactions without a matching sub_id
 df_unmatched_transactions = spark.sql(

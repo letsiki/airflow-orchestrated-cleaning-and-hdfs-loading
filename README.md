@@ -18,7 +18,7 @@ Even if only testing the final phase, I would encourage you to go through the no
 
 - ✅ Phase 1: [Core Implementation (Base Requirements)](docs/phase1-notes.md)
 - ✅ Phase 2: [Automation Features (Extra 1)](docs/phase2-notes.md)
-- 🔄 Phase 3: [Containerization & PostgreSQL (Extra 2)](docs/phase3-notes.md)
+- ✅ Phase 3: [Containerization & PostgreSQL (Extra 2)](docs/phase3-notes.md)
 - 🔄 Phase 4: [Hadoop Cluster & HDFS (Extra 3)](docs/phase4-notes.md)
 - 🔄 Phase 4: [Airflow Orchestration (Optional))](docs/phase4-notes.md)
 
