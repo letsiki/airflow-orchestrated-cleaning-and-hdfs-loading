@@ -34,3 +34,7 @@ It is built upon Phase 4 and adds Orchestration and Scheduling to the Pipeline.
 - PyLint - for linting python scripts
 - Black - for formatting python scripts
 - VsCode - IDE
+
+## Other Projects
+- [Youtube Keyword-Based Sentiment Trend Analysis](https://github.com/letsiki/youtube-keyword-based-sentiment-trend-analysis)
+- [End-to-End Data Pipeline - American Community Survey](https://github.com/letsiki/end-to-end-data-pipeline-acs)
