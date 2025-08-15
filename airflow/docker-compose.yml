@@ -17,20 +17,19 @@ services:
 
   docker:
     image: docker:27-dind
-    container_name: airflow-docker
     privileged: true
+    command: ["--host=tcp://0.0.0.0:2375", "--host=unix:///var/run/docker.sock"]
     environment:
-      - DOCKER_TLS_CERTDIR=/certs
+      - DOCKER_TLS_CERTDIR=
     volumes:
-      - docker-certs-ca:/certs/ca
-      - docker-certs-client:/certs/client
       - docker-data:/var/lib/docker
+      - ../.:/workspace:ro
     networks:
-      - optasia_db
-    ports:
-      - "2376:2376"
+      default:
+        aliases: [dind, docker]
+      optasia_db:
     healthcheck:
-      test: [ "CMD", "docker", "info" ]
+      test: ["CMD", "docker", "info"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -46,13 +45,18 @@ services:
       docker:
         condition: service_healthy
     environment:
+      # Airflow core
       - AIRFLOW__CORE__EXECUTOR=LocalExecutor
       - AIRFLOW__CORE__LOAD_EXAMPLES=False
       - AIRFLOW__CORE__SIMPLE_AUTH_MANAGER_ALL_ADMINS=True
       - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
-      - DOCKER_HOST=tcp://docker:2376
-      - DOCKER_TLS_VERIFY=1
-      - DOCKER_CERT_PATH=/certs/client
+
+      # Optional: make a Docker connection that points to DinD (your DAG can still pass docker_url explicitly)
+      - AIRFLOW_CONN_DOCKER_DEFAULT=docker://dind?base_url=tcp://dind:2375
+
+      # Your existing app connections (Airflow container is on optasia_db so 'db' resolves)
+      - AIRFLOW_CONN_POSTGRES_CONN=postgresql+psycopg2://testuser:password@db:5432/optasia
+      - AIRFLOW_CONN_HDFS_CONN=http://namenode:9870/
     networks:
       - default
       - optasia_db
@@ -61,13 +65,10 @@ services:
     volumes:
       - ./dags:/opt/airflow/dags
       - airflow-logs:/opt/airflow/logs
-      - docker-certs-client:/certs/client:ro
 
 volumes:
   airflow-logs:
   pgdata:
-  docker-certs-ca:
-  docker-certs-client:
   docker-data:
 
 

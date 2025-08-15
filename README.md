@@ -19,11 +19,15 @@ Even if only testing the final phase, I would encourage you to go through the no
 - ✅ Phase 1: [Core Implementation (Base Requirements)](docs/phase1-notes.md)
 - ✅ Phase 2: [Automation Features (Extra 1)](docs/phase2-notes.md)
 - ✅ Phase 3: [Containerization & PostgreSQL (Extra 2)](docs/phase3-notes.md)
-- 🔄 Phase 4: [Hadoop Cluster & HDFS (Extra 3)](docs/phase4-notes.md)
-- 🔄 Phase 4: [Airflow Orchestration (Optional))](docs/phase4-notes.md)
+- ✅ Phase 4: [Hadoop Cluster & HDFS (Extra 3)](docs/phase4-notes.md)
+- 🔄 Phase 5: [Airflow Orchestration (Optional))](docs/phase4-notes.md)
 
 
 ## Universal Tools
 - PyLint - for linting python scripts
 - Black - for formatting python scripts
 - VsCode - IDE
+
+## Other Projects
+- [Youtube Keyword-Based Sentiment Trend Analysis](https://github.com/letsiki/youtube-keyword-based-sentiment-trend-analysis)
+- [End-to-End Data Pipeline - American Community Survey](https://github.com/letsiki/end-to-end-data-pipeline-acs)

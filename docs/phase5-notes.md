@@ -21,12 +21,6 @@
 - Overkill for simple batch jobs
 - Requires monitoring and alerting setup
 
-### Setup Instructions
-Checkout the phase5 tag:
-```bash
-git checkout phase5
-```
-
 **Prerequisites:**
 - Docker and Docker Compose installed
 - At least 16GB available RAM
@@ -43,9 +37,12 @@ docker compose -f docker compose up -d
 cd ..
 
 # Access Airflow Web UI: http://localhost:8080
-# Default credentials: admin/admin
 
-# Enable the ETL DAG from the web interface
+# Choose optasia_etl_pipeline and enable
+
+# You can click on it and press trigger for a sample dag run
+
+# You can find the parquet file(s) at NameNode Web UI: http://localhost:9870
 ```
 
 **Pipeline Monitoring:**
