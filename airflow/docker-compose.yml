@@ -1,0 +1,76 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: airflow-postgres
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U airflow" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  docker:
+    image: docker:27-dind
+    container_name: airflow-docker
+    privileged: true
+    environment:
+      - DOCKER_TLS_CERTDIR=/certs
+    volumes:
+      - docker-certs-ca:/certs/ca
+      - docker-certs-client:/certs/client
+      - docker-data:/var/lib/docker
+    networks:
+      - optasia_db
+    ports:
+      - "2376:2376"
+    healthcheck:
+      test: [ "CMD", "docker", "info" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  airflow:
+    image: apache/airflow:3.0.1-python3.12
+    container_name: airflow-dev
+    entrypoint: [ "airflow", "standalone" ]
+    depends_on:
+      postgres:
+        condition: service_healthy
+      docker:
+        condition: service_healthy
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
+      - AIRFLOW__CORE__SIMPLE_AUTH_MANAGER_ALL_ADMINS=True
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
+      - DOCKER_HOST=tcp://docker:2376
+      - DOCKER_TLS_VERIFY=1
+      - DOCKER_CERT_PATH=/certs/client
+    networks:
+      - default
+      - optasia_db
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - airflow-logs:/opt/airflow/logs
+      - docker-certs-client:/certs/client:ro
+
+volumes:
+  airflow-logs:
+  pgdata:
+  docker-certs-ca:
+  docker-certs-client:
+  docker-data:
+
+
+networks:
+  optasia_db:
+    external: true
