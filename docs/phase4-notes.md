@@ -21,16 +21,9 @@
 - No data replication policies configured
 - Limited HDFS optimization for small datasets
 
-### Setup Instructions
-Checkout the phase4 tag:
-```bash
-git checkout phase4
-```
-
 **Prerequisites:**
 - Docker and Docker Compose installed
-- At least 12GB available RAM
-- Sufficient disk space for HDFS storage
+- At least 8GB available RAM
 
 **Setup & Run:**
 ```bash
