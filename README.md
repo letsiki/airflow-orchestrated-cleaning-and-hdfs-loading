@@ -1,61 +1,71 @@
 # Data Engineering Assessment
 
-## General Interpretation of the task at hand
+## General Interpretation of the Task at Hand
+- We receive **transactional data** twice a day (incremental).  
+- Subscriber data may be a **full snapshot** (spanning across years), but since this is uncertain, we **only insert new subscriber IDs** into the subscribers table.  
+- Both data sources are cleaned before ingestion.  
+- The subscribers table is **append-only**, growing as new IDs appear.  
+- Transactions, enriched by joining with the current subscribers table, are stored in **Parquet format** (columnar, analytics-ready).  
 
-- We are receiving incremental-transactional data twice a day
-- Client data is not incremental, it may contain the whole subscribers dataset, but just to be sure we will be inserting only new sub_id's starting from phase 2
-- First, we need to clean both sources.
-- My understanding is that we need to maintain a db table of subscribers, overwriting it each time, with the new data.
-- On the other hand, transactions, enriched by the joining with the
-subscribers table, will be stored in a columnar format ready for analytics (parquet)
+---
 
-## Current Status: Phase 5: [Airflow Orchestration](docs/phase5-notes.md) ✅
+## Current Status
+**Phase 5 – [Airflow Orchestration](docs/phase5-notes.md) ✅**  
+(DAG structure and flow diagram included in Phase 5 documentation)  
 
-## Phase History 
- 
-I would recommend that you stay in this branch (airflow) and follow the
-instructions below to run the project. It is the easiest way (least prerequisites) to run the project.  
+---
 
-Having said that, I would encourage you to go through the notes of each phase, in order to get a more clear picture of how the project evolved, as each phase is building on top of the previous one. (Links below)
+## Phase History
+This repository shows the project’s evolution in 5 phases.  
+- The **default branch is `airflow`** (Phase 5).  
+- For earlier phases:  
+  1. Switch to branch `main`  
+  2. Checkout the appropriate tag (`phase1`, `phase2`, `phase3`, `phase4`)  
 
-In case you still wish to run a previous phase of the project, please switch to branch main, and checkout to the appropriate tag (phase1, phase2, phase3, phase4)
+Each phase builds on the previous one, with detailed notes in the `/docs` folder:  
+- ✅ Phase 1: [Core Implementation (Base Requirements)](docs/phase1-notes.md)  
+- ✅ Phase 2: [Automation Features (Extra 1)](docs/phase2-notes.md)  
+- ✅ Phase 3: [Containerization & PostgreSQL (Extra 2)](docs/phase3-notes.md)  
+- ✅ Phase 4: [Hadoop Cluster & HDFS (Extra 3)](docs/phase4-notes.md)  
+- ✅ Phase 5: [Airflow Orchestration](docs/phase5-notes.md)  
 
-- ✅ Phase 1: [Core Implementation (Base Requirements)](docs/phase1-notes.md)
-- ✅ Phase 2: [Automation Features (Extra 1)](docs/phase2-notes.md)
-- ✅ Phase 3: [Containerization & PostgreSQL (Extra 2)](docs/phase3-notes.md)
-- ✅ Phase 4: [Hadoop Cluster & HDFS (Extra 3)](docs/phase4-notes.md)
-- ✅ Phase 5: [Airflow Orchestration](docs/phase5-notes.md)
+---
 
 ## Quick Start Guide
 ```bash
-# Start infrastructure services (PostgreSQL + Hadoop cluster)
+# Start infrastructure (PostgreSQL + Hadoop)
 docker compose up -d
 
-# Start Airflow services (connects to existing infrastructure)
-cd airflow
-docker compose up -d
+# Start Airflow (from airflow/ folder)
+cd airflow && docker compose up -d
 
-# Access Airflow Web UI: http://localhost:8080 (might have to wait for 1-minute max)
+# Open Airflow UI (http://localhost:8080), enable DAG: optasia_pipeline
 
-# Enable optasia_pipeline (toggle)
+# Trigger a run and monitor under 'Runs'
 
-# Click on it and then navigate to 'Runs'
-
-# Choose active run and watch its progress
-
-# Once the dag run is complete...
-
-# You can find the parquet file(s) at NameNode Web UI: http://localhost:9870
-
-# And also locally, at data/output
-
+# Outputs: 
+# - HDFS NameNode UI: http://localhost:9870
+# - Local folder: data/output/
 ```
 
+---
+
+## Assumptions
+- Subscriber data may be a **full snapshot**, but we treat it cautiously:  
+  → **only new subscriber IDs are inserted** into the subscribers table.  
+- Transactions are **incremental** and arrive twice daily.  
+- The subscribers table is **append-only** (no overwrites).  
+- Cleaned and enriched transactions are stored in **Parquet format** for downstream analytics.  
+
+---
+
 ## Universal Tools
-- PyLint - for linting python scripts
-- Black - for formatting python scripts
-- VsCode - IDE
+- **PyLint** – linting Python scripts  
+- **Black** – formatting Python scripts  
+- **VS Code** – IDE  
+
+---
 
 ## Other Projects
-- [Youtube Keyword-Based Sentiment Trend Analysis](https://github.com/letsiki/youtube-keyword-based-sentiment-trend-analysis)
-- [End-to-End Data Pipeline - American Community Survey](https://github.com/letsiki/end-to-end-data-pipeline-acs)
+- [YouTube Keyword-Based Sentiment Trend Analysis](https://github.com/letsiki/youtube-keyword-based-sentiment-trend-analysis)  
+- [End-to-End Data Pipeline – American Community Survey](https://github.com/letsiki/end-to-end-data-pipeline-acs)  
