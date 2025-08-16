@@ -24,6 +24,7 @@
 ### Setup Instructions
 Checkout the phase4 tag:
 ```bash
+git switch main
 git checkout phase4
 ```
 

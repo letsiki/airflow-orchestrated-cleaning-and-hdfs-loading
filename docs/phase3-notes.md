@@ -23,6 +23,7 @@
 ### Setup Instructions
 Checkout the phase3 tag:
 ```bash
+git switch main
 git checkout phase3
 ```
 

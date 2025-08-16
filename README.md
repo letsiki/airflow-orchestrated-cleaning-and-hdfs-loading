@@ -9,19 +9,47 @@
 - On the other hand, transactions, enriched by the joining with the
 subscribers table, will be stored in a columnar format ready for analytics (parquet)
 
-## Current Status: Phase 5: [Airflow Orchestration (Optional))](docs/phase4-notes.md) ✅
+## Current Status: Phase 5: [Airflow Orchestration](docs/phase5-notes.md) ✅
 
 ## Phase History 
-Click on the link for details and setup guide.  
+ 
+I would recommend that you stay in this branch (airflow) and follow the
+instructions below to run the project. It is the easiest way (least prerequisites) to run the project.  
 
-Even if only testing the final phase, I would encourage you to go through the notes of each phase, in order to get a more clear picture of how the project evolved, as each phase is building on top of the previous one.
+Having said that, I would encourage you to go through the notes of each phase, in order to get a more clear picture of how the project evolved, as each phase is building on top of the previous one. (Links below)
+
+In case you still wish to run a previous phase of the project, please switch to branch main, and checkout to the appropriate tag (phase1, phase2, phase3, phase4)
 
 - ✅ Phase 1: [Core Implementation (Base Requirements)](docs/phase1-notes.md)
 - ✅ Phase 2: [Automation Features (Extra 1)](docs/phase2-notes.md)
 - ✅ Phase 3: [Containerization & PostgreSQL (Extra 2)](docs/phase3-notes.md)
 - ✅ Phase 4: [Hadoop Cluster & HDFS (Extra 3)](docs/phase4-notes.md)
-- 🔄 Phase 5: [Airflow Orchestration (Optional))](docs/phase4-notes.md)
+- ✅ Phase 5: [Airflow Orchestration](docs/phase5-notes.md)
 
+## Quick Start Guide
+```bash
+# Start infrastructure services (PostgreSQL + Hadoop cluster)
+docker compose up -d
+
+# Start Airflow services (connects to existing infrastructure)
+cd airflow
+docker compose up -d
+
+# Access Airflow Web UI: http://localhost:8080 (might have to wait for 1-minute max)
+
+# Enable optasia_pipeline (toggle)
+
+# Click on it and then navigate to 'Runs'
+
+# Choose active run and watch its progress
+
+# Once the dag run is complete...
+
+# You can find the parquet file(s) at NameNode Web UI: http://localhost:9870
+
+# And also locally, at data/output
+
+```
 
 ## Universal Tools
 - PyLint - for linting python scripts

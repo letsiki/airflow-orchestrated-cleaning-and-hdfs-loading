@@ -35,7 +35,7 @@ docker compose up -d
 cd airflow
 docker compose up -d
 
-# Access Airflow Web UI: http://localhost:8080
+# Access Airflow Web UI: http://localhost:8080 (might have to wait for 1-minute max)
 
 # Enable optasia_pipeline (toggle)
 

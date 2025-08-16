@@ -22,6 +22,7 @@
 ### Setup Instructions
 Checkout the phase2 tag:
 ```bash
+git switch main
 git checkout phase2
 ```
 
