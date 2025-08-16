@@ -112,6 +112,6 @@ spark.sql(read_sql_file("src/sql/join.sql")).write.mode("overwrite").parquet(
 # ----------------------PRINT TABLES TO VERIFY RESULTS------------------------- #
 
 # Print subscribers and unmatched_transactions tables as well as transactions parquet
-print_postgres_table("postgres", "subscribers")
-print_postgres_table("postgres", "unmatched_transactions")
+print_postgres_table("db", "subscribers")
+print_postgres_table("db", "unmatched_transactions")
 print_parquet_file(spark, "data/output/2021-01-01a_final_transactions.parquet")

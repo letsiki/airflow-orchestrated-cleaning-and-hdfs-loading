@@ -9,7 +9,7 @@
 - On the other hand, transactions, enriched by the joining with the
 subscribers table, will be stored in a columnar format ready for analytics (parquet)
 
-## Current Status: Phase 2: [Automation Features (Extra 1)](docs/phase2-notes.md) ✅
+## Current Status: Phase 5: [Airflow Orchestration (Optional))](docs/phase4-notes.md) ✅
 
 ## Phase History 
 Click on the link for details and setup guide.  

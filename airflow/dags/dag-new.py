@@ -8,10 +8,11 @@ from docker.types import Mount
 
 
 @dag(
-    dag_id="conn_healthchecks",
+    dag_id="optasia_pipeline",
     start_date=datetime(2025, 8, 15),
-    schedule=None,
+    schedule="0 */12 * * *",  # Every 12 hours at 00:00 and 12:00
     catchup=False,
+    max_active_runs=1,
 )
 def pipeline():
     @task
@@ -54,9 +55,9 @@ def pipeline():
         hour = logical_date.hour
 
         if hour < 12:
-            suffix = "_a"
+            suffix = "_a_"
         else:
-            suffix = "_b"
+            suffix = "_b_"
 
         formatted_ds = f"{execution_date}{suffix}"
         print(f"Formatted ds: {formatted_ds}")
@@ -85,6 +86,30 @@ def pipeline():
             ),
         ],
     )
+
+    build_spark_job_image = DockerOperator(
+        task_id="build_spark_job_image",
+        image="docker:27-cli",
+        mount_tmp_dir=False,
+        command="docker build -f /workspace/Dockerfile.spark-job -t optasia-spark-job:latest /workspace",
+        docker_url="tcp://dind:2375",  # <-- IMPORTANT (or use docker_url="tcp://docker:2375")
+        auto_remove="force",
+        environment={
+            "DOCKER_HOST": "unix:///var/run/docker.sock",
+        },  # CLI -> daemon via unix socket
+        mounts=[
+            # unix socket from DinD host into this CLI container
+            Mount(
+                type="bind",
+                source="/var/run/docker.sock",
+                target="/var/run/docker.sock",
+            ),
+            # your build context (already mounted into DinD at /workspace)
+            Mount(
+                type="bind", source="/workspace", target="/workspace", read_only=True
+            ),
+        ],
+    )
     # Use host network mode since optasia_db network is not visible in DinD
     run_db_init = DockerOperator(
         task_id="run_db_init",
@@ -94,29 +119,58 @@ def pipeline():
         network_mode="host",  # Use host network mode
         auto_remove="force",
         environment={
-            "PGHOST": "postgres",
+            "PGHOST": "db",
             "PGPORT": "5432",
             "PGDATABASE": "optasia",
             "PGUSER": "testuser",
             "PGPASSWORD": "password",
         },
     )
-    debug_networks = DockerOperator(
-        task_id="debug_networks",
-        image="docker:27-cli",
-        docker_url="tcp://dind:2375",
+
+    # Task 5: Spark ETL job
+    spark_etl_task = DockerOperator(
+        task_id="spark_etl_job",
+        image="optasia-spark-job:latest",
         mount_tmp_dir=False,
-        command="sh -c 'DOCKER_HOST=tcp://host.docker.internal:2375 docker network ls || DOCKER_HOST=tcp://172.17.0.1:2375 docker network ls || echo \"Could not connect to Docker daemon\"'",
+        docker_url="tcp://dind:2375",
         auto_remove="force",
+        network_mode="host",
+        environment={
+            "ds": "{{ task_instance.xcom_pull(task_ids='format_ds_with_run_suffix') }}"
+        },
+        mounts=[
+            Mount(
+                source="/opt/airflow/data/input", target="/app/data/input", type="bind"
+            ),
+            Mount(
+                source="/opt/airflow/data/output",
+                target="/app/data/output",
+                type="bind",
+            ),
+        ],
     )
-    (
-        check_postgres()
-        >> debug_networks
-        >> check_hdfs_webhdfs()
-        >> format_ds_with_run_suffix()
-        >> build_db_init_image
-        >> run_db_init
-    )
+
+    check_postgres_task = check_postgres()
+    check_hdfs_webhdfs_task = check_hdfs_webhdfs()
+    format_ds_with_run_suffix_task = format_ds_with_run_suffix()
+
+    # define prerequisite tasks
+    prereq_tasks = [
+        check_hdfs_webhdfs_task,
+        check_postgres_task,
+        format_ds_with_run_suffix_task,
+    ]
+
+    #  set them as prequisites to both db_init and spark_etl
+    prereq_tasks >> run_db_init
+    prereq_tasks >> spark_etl_task
+
+    # set both db_init and spark_etl to depend on their docker image creation
+    build_db_init_image >> run_db_init
+    build_spark_job_image >> spark_etl_task
+
+    # have db_init run prior to spark_etl
+    run_db_init >> spark_etl_task
 
 
 dag = pipeline()

@@ -18,18 +18,19 @@ services:
   docker:
     image: docker:27-dind
     privileged: true
-    command: ["--host=tcp://0.0.0.0:2375", "--host=unix:///var/run/docker.sock"]
+    command: [ "--host=tcp://0.0.0.0:2375", "--host=unix:///var/run/docker.sock" ]
     environment:
       - DOCKER_TLS_CERTDIR=
     volumes:
       - docker-data:/var/lib/docker
       - ../.:/workspace:ro
+      - ${AIRFLOW_PROJ_DIR:-.}/../data:/opt/airflow/data
     networks:
       default:
-        aliases: [dind, docker]
+        aliases: [ dind, docker ]
       optasia_db:
     healthcheck:
-      test: ["CMD", "docker", "info"]
+      test: [ "CMD", "docker", "info" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -63,6 +64,7 @@ services:
     ports:
       - "8080:8080"
     volumes:
+      - ${AIRFLOW_PROJ_DIR:-.}/../data:/opt/airflow/data
       - ./dags:/opt/airflow/dags
       - airflow-logs:/opt/airflow/logs
 

@@ -23,27 +23,40 @@
 
 **Prerequisites:**
 - Docker and Docker Compose installed
-- At least 16GB available RAM
+- At least 8GB available RAM
 - Basic understanding of Airflow concepts
 
 **Setup & Run:**
 ```bash
 # Start infrastructure services (PostgreSQL + Hadoop cluster)
-docker compose docker compose up -d
+docker compose up -d
 
 # Start Airflow services (connects to existing infrastructure)
 cd airflow
-docker compose -f docker compose up -d
-cd ..
+docker compose up -d
 
 # Access Airflow Web UI: http://localhost:8080
 
-# Choose optasia_etl_pipeline and enable
+# Enable optasia_pipeline (toggle)
 
-# You can click on it and press trigger for a sample dag run
+# Click on it and then navigate to 'Runs'
+
+# Choose active run and watch its progress
+
+# Once the dag run is complete...
 
 # You can find the parquet file(s) at NameNode Web UI: http://localhost:9870
+
+# And also locally, at data/output
+
 ```
+
+## Scheduling & File Names
+**The DAG will run twice per day because data_transactions.csv  contains 12-hour data.**
+**The generated parquet file will have a prefix containing the following:**
+    - dag run date
+    - '_a_' if it was the first half of the day
+    - '_b_' if it was the second half of the day
 
 **Pipeline Monitoring:**
 - Airflow Web UI: http://localhost:8080
