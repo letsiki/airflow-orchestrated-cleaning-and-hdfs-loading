@@ -63,12 +63,15 @@ docker compose up -d
 - NameNode Web UI: http://localhost:9870
 - Monitor DAG runs, task logs, and data lineage
 
+### DAG
+
+![DAG](../png/dag.png)
+
 ### Design Decisions
-- Separated infrastructure (docker-compose.infrastructure.yml) from orchestration (docker-compose.airflow.yml)
-- Used DockerOperator for Spark job execution, BashOperator for HDFS file operations
+- Separated infrastructure from orchestration 
+- Used DockerOperator for Spark job execution, 
 - Implemented multi-step DAG: db-init → spark-processing → hdfs-storage → cleanup
 - Configured automatic retries for failed database connections
 - Added data quality checks between pipeline stages
 - Used shared Docker networks to connect Airflow with existing infrastructure
-- Implemented email alerts for pipeline failures (configuration required)
-- Used Airflow Variables for environment-specific configurations
+- Used Airflow parameters in order to apply correct timestamp to our parquet filenames.

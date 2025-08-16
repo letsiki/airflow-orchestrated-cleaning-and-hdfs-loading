@@ -1,5 +1,6 @@
 from datetime import datetime
 from airflow.decorators import dag, task
+from airflow.providers.standard.operators.bash import BashOperator
 from airflow.providers.postgres.hooks.postgres import PostgresHook
 from airflow.providers.docker.operators.docker import DockerOperator
 from airflow.hooks.base import BaseHook  # core; no extra provider
@@ -127,7 +128,6 @@ def pipeline():
         },
     )
 
-    # Task 5: Spark ETL job
     spark_etl_task = DockerOperator(
         task_id="spark_etl_job",
         image="optasia-spark-job:latest",
@@ -150,6 +150,37 @@ def pipeline():
         ],
     )
 
+    copy_to_hdfs_task = DockerOperator(
+    task_id="copy_to_hdfs",
+    image="curlimages/curl:latest",
+    docker_url="tcp://dind:2375",
+    mount_tmp_dir=False,
+    auto_remove="force",
+    network_mode="host",
+    command=[
+        "sh", "-c",
+        """
+        WEBHDFS_URL="http://namenode:9870/webhdfs/v1"
+        
+        find /opt/airflow/data/output/ -name "*.parquet" | while read file; do
+            filename=$(basename "$file")
+            redirect_url=$(curl -s -i -X PUT "$WEBHDFS_URL/user/spark/output/$filename?op=CREATE&overwrite=true" | grep -i "Location:" | cut -d' ' -f2 | tr -d '\\r\\n')
+            curl --max-time 300 -s -X PUT "$redirect_url" -T "$file"
+            echo "Uploaded: $filename"
+        done
+        
+        echo "🎉 All files uploaded to HDFS!"
+        """
+    ],
+    mounts=[
+        Mount(
+            source="/opt/airflow/data",
+            target="/opt/airflow/data",
+            type="bind"
+        )
+    ]
+)
+
     check_postgres_task = check_postgres()
     check_hdfs_webhdfs_task = check_hdfs_webhdfs()
     format_ds_with_run_suffix_task = format_ds_with_run_suffix()
@@ -171,6 +202,9 @@ def pipeline():
 
     # have db_init run prior to spark_etl
     run_db_init >> spark_etl_task
+
+    # copy parquet to hdfs at the end
+    spark_etl_task >> copy_to_hdfs_task
 
 
 dag = pipeline()
